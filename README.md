@@ -17,10 +17,13 @@ I want to focus on sourcing data from an API, creating a database, and visualizi
   This page will show a list of navigation links to other routes in the application, a link to the We the People website, a disclaimer that the application is not endorsed by We the People/the White House, a description of the application, and a few "teaser" pieces of information or visualizations such as the number of public petitions collecting signatures right now
 
 - Issues: /issues/
-  This page will show a list of all of the issues (tags) that can be used for We the People petitions
+  This page will show a list of all of the issues (tags) that can be used for We the People petitions, how many petitions each issue is used for, and a button to click to see all petitions with that issue
 
-- Route 3: /issues/<issue name>  →   
-  This page will show the information here, a brief description.
+- Specific Issues: /issues/<issue name>  →   
+  This page will show a list of all of the petitions with the issue given in the url
+
+- Visualizations: /viz
+  This page will show data visualizations representing the petitions; specific visualizations TBD
 
 ## Specifics
 
