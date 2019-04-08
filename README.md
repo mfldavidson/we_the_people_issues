@@ -19,7 +19,7 @@ I want to focus on sourcing data from an API, creating a database, and visualizi
 - Issues: /issues/
   This page will show a list of all of the issues (tags) that can be used for We the People petitions, how many petitions each issue is used for, and a button to click to see all petitions with that issue
 
-- Specific Issues: /issues/<issue name>  →   
+- Specific Issues: /issues/`<issue name>`  
   This page will show a list of all of the petitions with the issue given in the url
 
 - Visualizations: /viz
