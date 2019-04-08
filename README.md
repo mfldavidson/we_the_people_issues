@@ -33,11 +33,14 @@ I will be relying on petitions data from the We the People API
 Documentation for We the People API with example response data: https://petitions.whitehouse.gov/developers/get-code
 
 #### Database
-I expect my database schema to include 2 tables
+I expect my database schema to include 3 tables
 
-The entities each table will represent are: petitions and issues (tags)
+The entities each table will represent are:
+- petitions
+- issues (tags)
+- types
 
-There will be a many to many or relationship between the two tables
+There will be a many to many relationship between petitions and issues and between petitions and types
 
 I will be populating the database by requesting the API and loading the response in to a .sqlite database file which my Flask app will rely on and have models to describe
 
