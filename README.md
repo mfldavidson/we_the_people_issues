@@ -46,24 +46,23 @@ I will be populating the database by requesting the API and loading the response
 
 #### Program and Application
 I am planning to use the following modules in writing my code, aside from Flask and SQLAlchemy:
-> - plotly - for charting/graphing data
-> - matplotlib - also for charting
-> - requests_cache - for caching data I scrape
+- plotly - for charting/graphing data
+- Flask Table - for displaying tables of data from the DB
 
 I will be defining the following functions outside of Flask routes:
-> - Function 1: what will it do, what input does it take, what does it return
-> - Function 2: what will it do, what input does it take, what does it return
+- getPetitionsByIssue(issue_str): will take 1 input, a string representing one of the types of issues, and will return a list of all petitions with that issue
+- filterBy(TBD): filter a list of petitions by a given (in the input) variable--there will be default inputs for things like isPublic, status, etc--and return the filtered list
 
 I will be defining the following classes outside of Flask routes/models:
-> - Class 1: what is it, does it inherit from anything, what does the constructor require, why and how will I use it
-> - Class 2: what is it, does it inherit from anything, what does the constructor require, why and how will I use it
+- class Petition: represents one We the People petition, the constructor takes a dictionary representing data about the petition as returned by the API and cached in the cache file, will be used to manage and manipulate petitions throughout the app; does not inherit
+- class Issue: represents one issue (tag), constructor takes a tuple representing an issue ID and name, doesn't inherit, but one variable will contain all petitions with that issue
 
 The assignment(s) in 507 we’ve done that are most like what I want to do are:
 - Project 4 Option 1 (because I created a .sqlite database as a part of it)
 - Project 3 (because of the .sqlite database integrated into a Flask application)
 
 Other useful resources for this project for me will be:
-> links or references to specific things I think will be helpful to reference, including specific lecture notes, lab examples, code examples from class, readings, or anything on the internet you’ve found useful
+Documentation from each additional module
 
 
 ## Other
