@@ -1,5 +1,7 @@
 from flask import Flask, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_table import Table, Col, DateCol, LinkCol, BoolCol
+from flask_table.html import element
 
 # Application configurations
 app = Flask(__name__)
@@ -20,9 +22,6 @@ class Petition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250))
     body = db.Column(db.Text)
-    type = db.Column(db.Integer, db.ForeignKey('types.id'))
-    issue = db.Column(db.Integer, db.ForeignKey('issues.id'))
-    signature_threshold = db.Column(db.Integer)
     signature_count = db.Column(db.Integer)
     signatures_needed = db.Column(db.Integer)
     url = db.Column(db.String(250))
@@ -31,19 +30,18 @@ class Petition(db.Model):
     response = db.Column(db.Text)
     created_date = db.Column(db.DateTime)
     is_signable = db.Column(db.Boolean)
-    is_public = db.Column(db.Boolean)
     reached_public = db.Column(db.Boolean)
-    type_rel = relationship('Type',secondary='type-petition-association',back_populates='petition_rel',lazy='dynamic')
-    issue_rel = relationship('Issue',secondary='issue-petition-association',back_populates='petition_rel',lazy='dynamic')
+    type_rel = db.relationship('PetitionType',secondary='typepetitionassociation',back_populates='petition_rel',lazy='dynamic')
+    issue_rel = db.relationship('Issue',secondary='issuepetitionassociation',back_populates='petition_rel',lazy='dynamic')
 
     def __repr__(self):
         return 'Petition: {}'.format(self.title)
 
-class Type(db.Model):
+class PetitionType(db.Model):
     __tablename__ = "types"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    petition_rel = relationship('Petition',secondary='type-petition-association',back_populates='type_rel',lazy='dynamic')
+    petition_rel = db.relationship('Petition',secondary='typepetitionassociation',back_populates='type_rel',lazy='dynamic')
 
     def __repr__(self):
         return "Type: {}".format(self.name)
@@ -52,49 +50,90 @@ class Issue(db.Model):
     __tablename__ = "issues"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    petition_rel = relationship('Petition',secondary='issue-petition-association',back_populates='issue_rel',lazy='dynamic')
+    petition_rel = db.relationship('Petition',secondary='issuepetitionassociation',back_populates='issue_rel',lazy='dynamic')
 
     def __repr__(self):
         return "Issue: {}".format(self.name)
 
-class TypePetitionAssociation(Base):
-    __tablename__ = 'type-petition-association'
-    petition_id = Column(Integer, ForeignKey('petitions.id'),primary_key=True)
-    type_id = Column(Integer, ForeignKey('types.id'),primary_key=True)
-    petition_assoc = relationship(Petition, backref=backref('type_assoc'))
-    type_assoc = relationship(Type, backref=backref('petition_assoc'))
+class TypePetitionAssociation(db.Model):
+    __tablename__ = 'typepetitionassociation'
+    rel_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'))
+    type_id = db.Column(db.Integer, db.ForeignKey('types.id'))
+    petition_assoc = db.relationship(Petition, backref=db.backref('type_assoc'))
+    type_assoc = db.relationship(PetitionType, backref=db.backref('petition_assoc'))
 
-class IssuePetitionAssociation(Base):
-    __tablename__ = 'issue-petition-association'
-    petition_id = Column(Integer, ForeignKey('petitions.id'),primary_key=True)
-    issue_id = Column(Integer, ForeignKey('issues.id'),primary_key=True)
-    petition_assoc = relationship(Petition, backref=backref('issue_assoc'))
-    issue_assoc = relationship(Issue, backref=backref('petition_assoc'))
+class IssuePetitionAssociation(db.Model):
+    __tablename__ = 'issuepetitionassociation'
+    rel_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'))
+    issue_id = db.Column(db.Integer, db.ForeignKey('issues.id'))
+    petition_assoc = db.relationship(Petition, backref=db.backref('issue_assoc'))
+    issue_assoc = db.relationship(Issue, backref=db.backref('petition_assoc'))
 
-# functions to get or create new values
-# def get_rating(rating_text,rating_num=None):
-#     rating = Rating.query.filter_by(text=rating_text).first()
-#     if rating:
-#         return rating
-#     else:
-#         return 'This is not a valid MPAA rating. Please use one of the following: G, PG, PG-13, R, or NC-17'
-#
-# def get_or_create_distributor(distributor_name):
-#     distributor = Distributor.query.filter_by(name=distributor_name).first()
-#     if distributor:
-#         return distributor
-#     else:
-#         distributor = Distributor(name=distributor_name)
-#         session.add(distributor)
-#         session.commit()
-#         return distributor
-#
-# def get_or_create_director(first,last):
-#     director = Director.query.filter_by(fname=first,lname=last).first()
-#     if director:
-#         return director
-#     else:
-#         director = Director(fname=first,lname=last)
-#         session.add(director)
-#         session.commit()
-#         return director
+# ExternalURLCol code adapted from: https://github.com/plumdog/flask_table/blob/master/examples/external_url_col.py
+class ExternalURLCol(Col):
+    def __init__(self, name, url_attr):
+        self.url_attr = url_attr
+        super(ExternalURLCol, self).__init__(name)
+
+    def td_contents(self, item, attr_list):
+        text = 'Original We the People Petition'
+        url = self.from_attr_list(item, [self.url_attr])
+        return element('a', {'href': url}, content=text)
+
+class PetitionTable(Table):
+    html_attrs = {'table-layout':'fixed'}
+    title = Col('Petition Title')
+    url = ExternalURLCol('Link to Petition on We the People', url_attr='url')
+    created_date = DateCol('Created')
+    deadline_date = DateCol('Deadline')
+
+    def get_td_attrs(self, item):
+        return {'word-wrap':'break-word'}
+
+class OpenPetitionTable(PetitionTable):
+    signatures_needed = Col('Signatures Needed')
+
+class ClosedPetitionTable(PetitionTable):
+    status = Col('Status')
+    reached_public = BoolCol('Reached Public?')
+
+def getPetitionsByIssue(issue_id):
+    rels = IssuePetitionAssociation.query.filter_by(issue_id=issue_id).all()
+    petitions = []
+    for rel in rels:
+        petitions.append(Petition.query.filter_by(id=rel.petition_id).first())
+    return petitions
+
+def filterSignablePetitions(list_of_petitions,is_signable = True):
+    filtered_petitions = []
+    for petition in list_of_petitions:
+        if petition.is_signable == is_signable:
+            filtered_petitions.append(petition)
+    return filtered_petitions
+
+def filterUnSignablePetitions(list_of_petitions):
+    filtered_petitions = []
+    for petition in list_of_petitions:
+        if petition.is_signable != True:
+            filtered_petitions.append(petition)
+    return filtered_petitions
+
+def filterPetitions(list_of_petitions, status='All', is_signable='All', reached_public='All'):
+    filtered_petitions = []
+    for petition in list_of_petitions:
+        meets_reqs = True
+        if status != 'All':
+            if status == 'All but Open':
+                if petition.status == 'open':
+                    meets_reqs = False
+            elif petition.status != status:
+                meets_reqs = False
+        if is_signable != 'All' and petition.is_signable != is_signable:
+            meets_reqs = False
+        if reached_public != 'All' and petition.reached_public != reached_public:
+            meets_reqs =  False
+        if meets_reqs == True:
+            filtered_petitions.append(petition)
+    return filtered_petitions
