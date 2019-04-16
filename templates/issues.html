@@ -1,0 +1,16 @@
+<html>
+<title>We the People Petitions - Issues</title>
+<header>
+  <h1>Issues</h1>
+  Select an issue to see all petitions tagged with that issue.
+</header>
+<div>
+<ul>
+{% for issue in issues %}
+<li><a href="/issues/{{ issue.id }}">{{ issue }}</a></li><br>
+{% endfor %}
+</ul>
+</div>
+
+<a href="{{ url_for('index')}}">Go to homepage</a>
+</html>

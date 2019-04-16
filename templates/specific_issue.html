@@ -1,0 +1,25 @@
+<html>
+<title>{{ issue.name }} Petitions</title>
+<header>
+  <h1>{{ issue.name }} Petitions</h1>
+</header>
+<div>
+  <h3>Petitions You Can Sign Now</h3>
+  {% if not open_petitions %}
+  There are no signable {{ issue.name }} petitions.
+  {% else %}
+  {{ open_petitions_table }}
+  {% endif %}
+</div>
+
+<div>
+  <h3>Closed Petitions</h3>
+  {% if not closed_petitions %}
+  There are no closed {{ issue.name }} petitions.
+  {% else %}
+  {{ closed_petitions_table }}
+  {% endif %}
+</div>
+
+<a href="{{ url_for('index')}}">Go to homepage</a>
+</html>
