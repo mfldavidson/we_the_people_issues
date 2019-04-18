@@ -6,6 +6,8 @@ class FinalProjDBTests(unittest.TestCase):
     def setUp(self):
         self.conn = sqlite3.connect("petitions.db")
         self.cur = self.conn.cursor()
+        self.petitions = getPetitionsByIssue(301)
+        self.open_petitions, self.closed_petitions = splitPetitionsBySignable(self.petitions)
 
     def testPetitionsTable(self):
         self.cur.execute("select * from petitions where id = 2722358")
@@ -33,18 +35,13 @@ class FinalProjDBTests(unittest.TestCase):
         self.assertEqual(data,(2722358, 291), "Testing data that results from selecting the relationship between petition 2722358 and type 291")
 
     def testGetPetitionsByIssueFunction(self):
-        petitions = getPetitionsByIssue(301)
-        self.assertEqual(len(petitions),39, "Testing that getPetitionsByIssue function returns 39 results when querying by issue 301")
+        self.assertEqual(len(self.petitions),39, "Testing that getPetitionsByIssue function returns 39 results when querying by issue 301")
 
     def testSplitPetitionsBySignableFunctionOpen(self):
-        petitions = getPetitionsByIssue(301)
-        open_petitions, closed_petitions = splitPetitionsBySignable(petitions)
-        self.assertEqual(len(open_petitions),0, "Testing that splitPetitionsBySignable function returns 0 results when splitting the 39 petitions with issue 301")
+        self.assertEqual(len(self.open_petitions),0, "Testing that splitPetitionsBySignable function returns 0 results when splitting the 39 petitions with issue 301")
 
     def testSplitPetitionsBySignableFunctionClosed(self):
-        petitions = getPetitionsByIssue(301)
-        open_petitions, closed_petitions = splitPetitionsBySignable(petitions)
-        self.assertEqual(len(closed_petitions),39, "Testing that splitPetitionsBySignable function returns 39 results when querying by issue 301")
+        self.assertEqual(len(self.closed_petitions),39, "Testing that splitPetitionsBySignable function returns 39 results when querying by issue 301")
 
     def tearDown(self):
         self.conn.commit()
