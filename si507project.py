@@ -10,8 +10,7 @@ CACHE =  Cache('petitions_cache.json')
 # routes
 @app.route('/')
 def index():
-    petitions = Petition.query.all()
-    return render_template('index.html', petitions=petitions)
+    return render_template('index.html')
 
 @app.route('/issues/')
 def all_issues():
@@ -22,14 +21,14 @@ def all_issues():
 def issue(issue_id):
     issue = Issue.query.filter_by(id=issue_id).first()
     petitions = getPetitionsByIssue(issue_id)
-    open_petitions = filterSignablePetitions(petitions)
+    open_petitions, closed_petitions = splitPetitionsBySignable(petitions)
     open_petitions_table = OpenPetitionTable(open_petitions)
-    closed_petitions = filterSignablePetitions(petitions, is_signable=False)
     closed_petitions_table = ClosedPetitionTable(closed_petitions)
     return render_template('specific_issue.html', issue=issue, open_petitions=open_petitions, open_petitions_table=open_petitions_table, closed_petitions=closed_petitions, closed_petitions_table=closed_petitions_table)
 
 # run app
 if __name__ == '__main__':
+    app.run()
     # get the data from the cache file if it exists and is not expired; else, get request the We the People API and cache the response
     data = CACHE.get(BASEURL)
     if not data:
@@ -106,4 +105,3 @@ if __name__ == '__main__':
                 new_rel = IssuePetitionAssociation(issue_id=issue['id'],petition_id=new_petition.id)
                 session.add(new_rel)
                 session.commit()
-    app.run()
