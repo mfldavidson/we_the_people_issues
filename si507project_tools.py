@@ -106,19 +106,15 @@ def getPetitionsByIssue(issue_id):
         petitions.append(Petition.query.filter_by(id=rel.petition_id).first())
     return petitions
 
-def filterSignablePetitions(list_of_petitions,is_signable = True):
-    filtered_petitions = []
+def splitPetitionsBySignable(list_of_petitions):
+    open_petitions = []
+    closed_petitions = []
     for petition in list_of_petitions:
-        if petition.is_signable == is_signable:
-            filtered_petitions.append(petition)
-    return filtered_petitions
-
-def filterUnSignablePetitions(list_of_petitions):
-    filtered_petitions = []
-    for petition in list_of_petitions:
-        if petition.is_signable != True:
-            filtered_petitions.append(petition)
-    return filtered_petitions
+        if petition.is_signable:
+            open_petitions.append(petition)
+        else:
+            closed_petitions.append(petition)
+    return open_petitions, closed_petitions
 
 def filterPetitions(list_of_petitions, status='All', is_signable='All', reached_public='All'):
     filtered_petitions = []
