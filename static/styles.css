@@ -1,0 +1,75 @@
+html,body,h1,h2,h3,h4,h5,h6 {
+  font-family: "Roboto", sans-serif;
+}
+a:link {
+  color: Teal
+}
+
+a:visited {
+  color: #0b423c
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* Style the top navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+  color: #ffffff;
+}
+
+/* Style the topnav links */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the content */
+.content {
+  background-color: #ddd;
+  padding: 10px;
+}
+
+/* Style the footer */
+.footer {
+  background-color: #f1f1f1;
+  padding: 10px;
+}
+
+#petitions {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#petitions td, #petitions th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#petitions tr:nth-child(even){background-color: #f2f2f2;}
+
+#petitions tr:hover {background-color: #ddd;}
+
+#petitions th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: DimGray;
+  color: white;
+  a:link
