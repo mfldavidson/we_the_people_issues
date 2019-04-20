@@ -1,10 +1,16 @@
 <html>
 <title>We the People Petitions - Issues</title>
-<header>
-  <h1>Issues</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class='topnav'>
+  <a href="{{ url_for('index')}}">Home</a>
+  <a href="{{ url_for('all_issues')}}">Petitions by Issue</a>
+</div>
+<div class='content'>
+  <h1>Petitions by Issue</h1>
   Select an issue to see all petitions tagged with that issue.
-</header>
-<div>
 <ul>
 {% for issue in issues %}
 <li><a href="/issues/{{ issue.id }}">{{ issue }}</a></li><br>
@@ -12,5 +18,7 @@
 </ul>
 </div>
 
-<a href="{{ url_for('index')}}">Go to homepage</a>
+<div class='footer'>
+  This app was made by <a href='https://mfldavidson.weebly.com/' target=_blank>Maggie Davidson</a> and uses the <a href="https://petitions.whitehouse.gov/" target=_blank>We the People</a> API, but is neither endorsed nor certified by the White House.
+</div>
 </html>
