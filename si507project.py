@@ -1,7 +1,13 @@
 import requests, json, html
 from advanced_expiry_caching import *
 from si507project_tools import *
-from datetime import datetime
+from datetime import datetime, timedelta
+import plotly
+import plotly.graph_objs
+import plotly.tools
+from plotly import plotly as ply
+
+plotly.tools.set_credentials_file(username='mfldavidson', api_key='qghsxxdhpcX64Jvpn7VS')
 
 # set up the url and the cache object
 BASEURL = 'https://api.whitehouse.gov/v1/petitions.json'
@@ -10,7 +16,38 @@ CACHE =  Cache('petitions_cache.json')
 # routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # get the number of petitions in the database
+    petitions = Petition.query.all()
+    num_petitions = len(petitions)
+    # count the number of petitions created in each month
+    timeframe = []
+    counts = []
+    month = datetime(2017,1,1)
+    while month < datetime.today():
+        timeframe.append(month.strftime("%b %y"))
+        counts.append(countPetitions(petitions, start_date = month, end_date = incrementMonth(month)))
+        month = incrementMonth(month)
+    # create plot
+    plot = plotly.graph_objs.Scatter(
+        x = timeframe,
+        y = counts,
+        name = 'Number of Petitions Created',
+        line = dict(
+            color = ('rgb(205, 12, 24)'),
+            width = 4)
+    )
+
+    data = [plot]
+    # Edit the layout
+    layout = dict(title = 'Petition Creation by Month',
+                  xaxis = dict(title = 'Month'),
+                  yaxis = dict(title = 'Number of Petitions Created'),
+                  )
+
+    fig = dict(data=data, layout=layout)
+    graph = ply.plot(fig, filename='petitions-by-month', auto_open=False)
+    graph_html = plotly.tools.get_embed(graph)
+    return render_template('index.html', num_petitions=num_petitions, graph_html=graph_html)
 
 @app.route('/issues/')
 def all_issues():
@@ -28,7 +65,6 @@ def issue(issue_id):
 
 # run app
 if __name__ == '__main__':
-    app.run()
     # get the data from the cache file if it exists and is not expired; else, get request the We the People API and cache the response
     data = CACHE.get(BASEURL)
     if not data:
@@ -39,7 +75,10 @@ if __name__ == '__main__':
             resp = requests.get(BASEURL, params).text
             resp_dict = json.loads(resp)
             data = data + resp_dict['results']
-            offset += 1000
+            if len(resp_dict['results']) == 1000:
+                offset += 1000
+            else:
+                break
         CACHE.set(BASEURL, data)
     # create the database
     db.create_all()
@@ -68,7 +107,7 @@ if __name__ == '__main__':
         if petition_exists:
             # for each issue and type, check if the relationship already exists with the petition
             for petition_type in petition['petition_type']:
-                rel_exists = session.query(TypePetitionAssociation).filter(TypePetitionAssociation.type_id == petition_type['id'], TypePetitionAssociation.petition_id == petition_exists.id).all()
+                rel_exists = session.query(TypePetitionAssociation).filter(TypePetitionAssociation.type_id == petition_type['id'], TypePetitionAssociation.petition_id == petition_exists.id).first()
                 if rel_exists:
                     continue
                 else:
@@ -76,7 +115,7 @@ if __name__ == '__main__':
                     session.add(new_rel)
                     session.commit()
             for issue in petition['issues']:
-                rel_exists = session.query(IssuePetitionAssociation).filter(IssuePetitionAssociation.issue_id == issue['id'], TypePetitionAssociation.petition_id == petition_exists.id).all()
+                rel_exists = session.query(IssuePetitionAssociation).filter(IssuePetitionAssociation.issue_id == issue['id'], IssuePetitionAssociation.petition_id == petition_exists.id).first()
                 if rel_exists:
                     continue
                 else:
@@ -105,3 +144,4 @@ if __name__ == '__main__':
                 new_rel = IssuePetitionAssociation(issue_id=issue['id'],petition_id=new_petition.id)
                 session.add(new_rel)
                 session.commit()
+    app.run()

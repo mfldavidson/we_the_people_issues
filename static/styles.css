@@ -72,4 +72,8 @@ body {
   text-align: left;
   background-color: DimGray;
   color: white;
-  a:link
+}
+
+#igraph {
+  color: #ffffff
+}

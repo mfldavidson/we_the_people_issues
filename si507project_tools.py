@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col, DateCol, LinkCol, BoolCol
 from flask_table.html import element
+from datetime import datetime, timedelta
 
 # Application configurations
 app = Flask(__name__)
@@ -78,12 +79,13 @@ class ExternalURLCol(Col):
         super(ExternalURLCol, self).__init__(name)
 
     def td_contents(self, item, attr_list):
-        text = 'Original We the People Petition'
+        text = 'View Petition'
         url = self.from_attr_list(item, [self.url_attr])
         return element('a', {'href': url}, content=text)
 
 class PetitionTable(Table):
     html_attrs = {'table-layout':'fixed'}
+    table_id = 'petitions'
     title = Col('Petition Title')
     url = ExternalURLCol('Link to Petition on We the People', url_attr='url')
     created_date = DateCol('Created')
@@ -93,11 +95,11 @@ class PetitionTable(Table):
         return {'word-wrap':'break-word'}
 
 class OpenPetitionTable(PetitionTable):
-    signatures_needed = Col('Signatures Needed')
+    signatures_needed = Col('Signatures Needed to Reach 100,000')
 
 class ClosedPetitionTable(PetitionTable):
+    signature_count = Col('Total Signatures Collected')
     status = Col('Status')
-    reached_public = BoolCol('Reached Public?')
 
 def getPetitionsByIssue(issue_id):
     rels = IssuePetitionAssociation.query.filter_by(issue_id=issue_id).all()
@@ -114,22 +116,40 @@ def splitPetitionsBySignable(list_of_petitions):
             open_petitions.append(petition)
         else:
             closed_petitions.append(petition)
+    open_petitions.sort(key=lambda petition: petition.created_date, reverse=True)
+    closed_petitions.sort(key=lambda petition: petition.created_date, reverse=True)
     return open_petitions, closed_petitions
 
-def filterPetitions(list_of_petitions, status='All', is_signable='All', reached_public='All'):
-    filtered_petitions = []
+# def filterPetitions(list_of_petitions, status='All', is_signable='All', reached_public='All'):
+#     filtered_petitions = []
+#     for petition in list_of_petitions:
+#         meets_reqs = True
+#         if status != 'All':
+#             if status == 'All but Open':
+#                 if petition.status == 'open':
+#                     meets_reqs = False
+#             elif petition.status != status:
+#                 meets_reqs = False
+#         if is_signable != 'All' and petition.is_signable != is_signable:
+#             meets_reqs = False
+#         if reached_public != 'All' and petition.reached_public != reached_public:
+#             meets_reqs =  False
+#         if meets_reqs == True:
+#             filtered_petitions.append(petition)
+#     return filtered_petitions
+
+# count all the petitions that were created in the given time range
+def countPetitions(list_of_petitions, start_date, end_date):
+    count = 0
     for petition in list_of_petitions:
-        meets_reqs = True
-        if status != 'All':
-            if status == 'All but Open':
-                if petition.status == 'open':
-                    meets_reqs = False
-            elif petition.status != status:
-                meets_reqs = False
-        if is_signable != 'All' and petition.is_signable != is_signable:
-            meets_reqs = False
-        if reached_public != 'All' and petition.reached_public != reached_public:
-            meets_reqs =  False
-        if meets_reqs == True:
-            filtered_petitions.append(petition)
-    return filtered_petitions
+        if petition.created_date > start_date and petition.created_date < end_date:
+            count += 1
+    return count
+
+# increment the month (source: http://code.activestate.com/recipes/577274-subtract-or-add-a-month-to-a-datetimedate-or-datet/)
+def incrementMonth(date):
+    one_day = timedelta(days=1)
+    one_month_later = date + one_day
+    while one_month_later.month == date.month:  # advance to start of next month
+        one_month_later += one_day
+    return one_month_later
