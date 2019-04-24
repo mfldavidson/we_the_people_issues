@@ -26,10 +26,9 @@ class Petition(db.Model):
     signature_count = db.Column(db.Integer)
     signatures_needed = db.Column(db.Integer)
     url = db.Column(db.String(250))
-    deadline_date = db.Column(db.DateTime)
     status = db.Column(db.String(25))
-    response = db.Column(db.Text)
     created_date = db.Column(db.DateTime)
+    deadline_date = db.Column(db.DateTime)
     is_signable = db.Column(db.Boolean)
     reached_public = db.Column(db.Boolean)
     type_rel = db.relationship('PetitionType',secondary='typepetitionassociation',back_populates='petition_rel',lazy='dynamic')
@@ -85,21 +84,21 @@ class ExternalURLCol(Col):
 
 class PetitionTable(Table):
     html_attrs = {'table-layout':'fixed'}
-    table_id = 'petitions'
     title = Col('Petition Title')
-    url = ExternalURLCol('Link to Petition on We the People', url_attr='url')
-    created_date = DateCol('Created')
-    deadline_date = DateCol('Deadline')
+    url = ExternalURLCol('Link to Petition', url_attr='url')
+    created_date = DateCol('Created',th_html_attrs={'data-type':'date'})
+    deadline_date = DateCol('Deadline',th_html_attrs={'data-type':'date'})
+    signature_count = Col('Signatures Collected')
+    status = Col('Status')
 
     def get_td_attrs(self, item):
         return {'word-wrap':'break-word'}
 
 class OpenPetitionTable(PetitionTable):
-    signatures_needed = Col('Signatures Needed to Reach 100,000')
+    table_id = 'openpetitions'
 
 class ClosedPetitionTable(PetitionTable):
-    signature_count = Col('Total Signatures Collected')
-    status = Col('Status')
+    table_id = 'closedpetitions'
 
 def getPetitionsByIssue(issue_id):
     rels = IssuePetitionAssociation.query.filter_by(issue_id=issue_id).all()
@@ -119,24 +118,6 @@ def splitPetitionsBySignable(list_of_petitions):
     open_petitions.sort(key=lambda petition: petition.created_date, reverse=True)
     closed_petitions.sort(key=lambda petition: petition.created_date, reverse=True)
     return open_petitions, closed_petitions
-
-# def filterPetitions(list_of_petitions, status='All', is_signable='All', reached_public='All'):
-#     filtered_petitions = []
-#     for petition in list_of_petitions:
-#         meets_reqs = True
-#         if status != 'All':
-#             if status == 'All but Open':
-#                 if petition.status == 'open':
-#                     meets_reqs = False
-#             elif petition.status != status:
-#                 meets_reqs = False
-#         if is_signable != 'All' and petition.is_signable != is_signable:
-#             meets_reqs = False
-#         if reached_public != 'All' and petition.reached_public != reached_public:
-#             meets_reqs =  False
-#         if meets_reqs == True:
-#             filtered_petitions.append(petition)
-#     return filtered_petitions
 
 # count all the petitions that were created in the given time range
 def countPetitions(list_of_petitions, start_date, end_date):
