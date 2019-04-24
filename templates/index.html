@@ -1,23 +1,41 @@
 <!DOCTYPE html>
 <html>
+<title>We the People Petitions App - Home</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="text/javascript">
+$(document).ready( function () {
+    $('#closedpetitions').DataTable(
+      {
+        responsive: true
+      }
+    );
+} );
+</script>
 
 <div class='topnav'>
   <a href="{{ url_for('index')}}">Home</a>
   <a href="{{ url_for('all_issues')}}">Petitions by Issue</a>
+  <a href="{{ url_for('charts')}}">Petition Visualizations</a>
 </div>
 
 <div class='content'>
   <h1>We the People Petitions by Issue Tag</h1>
   <h3>About this App</h3>
-  <p>This app extends the functionality of the White House's <a href="https://petitions.whitehouse.gov/" target=_blank>We the People Petitions site</a> by allowing users to learn about currently open petitions as well as closed petitions by the issue with which they are tagged.</p>
+  <p>This app extends the functionality of the White House's <a href="https://petitions.whitehouse.gov/" target=_blank>We the People Petitions site</a> by allowing users to learn about currently open petitions as well as closed petitions by the issue with which they are tagged. It also displays visualizations to help users understand trends over time of petitions and signatures. Use the links above to navigate around the app. <a href="https://petitions.whitehouse.gov/about" target=_blank>Learn more about the We the People site and petitions.</a></p>
 
   <h3>About the Petitions</h3>
-  <p>There have been {{ num_petitions }} petitions submitted to the White House using the We the People site.</p>
-  {{ graph_html }}
+  <p>The idea behind the We the People petitions site is that it allows people to create a petition and attempt to collect 100,000 signatures in 30 days. If the petition receives less than 100,000 signatures in 30 days, it is closed and no action is taken. If it receives 100,000 signatures or more in 30 days, the White House will issue an official response.</p>
+  <p>There have been {{ num_petitions }} petitions submitted to the White House using the We the People site going back to January, 2017. The petition that received the most signatures of all time is the <a href="{{ most_sigs.url }}">petition titled "{{ most_sigs.title }}"</a> created {{ most_sigs.created_date.strftime('%m/%d/%Y') }} with {{ most_sigs.signature_count }} signatures, which is {{ diff }} more signatures than the second-ranked petition by signature count. Many of the petitions receive less than 100,000 signatures and are thus closed without a response. However, there are many petitions that do receive the requisite 100,000 signatures and thus require a response from the White House. However, the White House does not specify by when it will issue a response, and some petitions remain unresponded-to more than 90 days past the signature deadline.</p>
+  <h3>Petitions Awaiting Response Over 90 Days After Deadline</h3>
+  {{ pending_petitions_table }}
 </div>
+
 <div class='footer'>
   This app was made by <a href='https://mfldavidson.weebly.com/' target=_blank>Maggie Davidson</a> and uses the <a href="https://petitions.whitehouse.gov/" target=_blank>We the People</a> API, but is neither endorsed nor certified by the White House.
 </div>
