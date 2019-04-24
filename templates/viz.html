@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<title>We the People Petitions App - Visualizations</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class='topnav'>
+  <a href="{{ url_for('index')}}">Home</a>
+  <a href="{{ url_for('all_issues')}}">Petitions by Issue</a>
+  <a href="{{ url_for('charts')}}">Petition Visualizations</a>
+</div>
+
+<div class='content'>
+  <h1>Petition Visualizations</h1>
+  <h3>Petitions Created by Month</h3>
+  <p>The following visualizations show the number of petitions created in each month.</p>
+  <!-- Original code embedding the plots onto the page
+  {{ all_petitions_graph_html|safe }}
+  {{ petitions_by_issue_graph_html|safe }} -->
+  <iframe width="100%" height="800" frameborder="0" scrolling="no" src="//plot.ly/~mfldavidson/2.embed"></iframe>
+  <iframe width="100%" height="800" frameborder="0" scrolling="no" src="//plot.ly/~mfldavidson/4.embed"></iframe>
+  <p>The following issues were omitted from the above chart due to having an all-time total of 100 or less petitions tagged with their issue:</p>
+  <ul>
+    {% for issue, petitions in omitted.items() %}
+    <li><b>{{ issue }}:</b> {{ petitions|length }} petitions tagged, all time
+    {% endfor %}
+  </ul>
+</div>
+<div class='footer'>
+  This app was made by <a href='https://mfldavidson.weebly.com/' target=_blank>Maggie Davidson</a> and uses the <a href="https://petitions.whitehouse.gov/" target=_blank>We the People</a> API, but is neither endorsed nor certified by the White House.
+</div>
+</html>
