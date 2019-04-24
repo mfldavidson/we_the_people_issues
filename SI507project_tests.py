@@ -12,7 +12,7 @@ class FinalProjDBTests(unittest.TestCase):
     def testPetitionsTable(self):
         self.cur.execute("select * from petitions where id = 2722358")
         data = self.cur.fetchone()
-        self.assertEqual(data,(2722358, "Remove Chuck Schumer and Nancy Pelosi from office", "Schumer and Pelosi's hatred and refusing to work with President Donald J. Trump is holding America hostage. We the people know securing our southern border is a priority which will not happen with these two in office. Lets build the wall NOW!", 149, 99851, "https://petitions.whitehouse.gov/petition/remove-chuck-schumer-and-nancy-pelosi-office", '2019-02-08 11:07:44.000000', 'closed', None, '2019-01-09 11:07:44.000000', False, False), "Testing data that results from selecting petition 2722358")
+        self.assertEqual(data,(2722358, "Remove Chuck Schumer and Nancy Pelosi from office", "Schumer and Pelosi's hatred and refusing to work with President Donald J. Trump is holding America hostage. We the people know securing our southern border is a priority which will not happen with these two in office. Lets build the wall NOW!", 149, 99851, "https://petitions.whitehouse.gov/petition/remove-chuck-schumer-and-nancy-pelosi-office", 'closed', '2019-01-09 11:07:44.000000', '2019-02-08 11:07:44.000000', False, False), "Testing data that results from selecting petition 2722358")
 
     def testIssuesTable(self):
         self.cur.execute("select id, name from issues where id = 326")
