@@ -8,7 +8,7 @@ Maggie Davidson
 
 ## Project Description
 
-This program runs a Flask application that retrieves [We the People petitions](https://petitions.whitehouse.gov/) data and allows the user to explore the petitions by the issues each petition is tagged with, which is currently not possible on the We the People site. The program uses Python Anaconda, Flask, SQLAlchemy, Flask Tables, a local database, a JSON cache file to cache data returned by the API, Jinja2 templates, and [DataTables](https://datatables.net/).
+This program runs a Flask application that retrieves [We the People petitions](https://petitions.whitehouse.gov/) data and allows the user to explore the petitions by the issues each petition is tagged with, which is currently not possible on the We the People site. The program uses Python Anaconda, Flask, SQLAlchemy, Flask Tables, a local database, a JSON cache file to cache data returned by the API, Jinja2 templates, and [DataTables](https://datatables.net/). A diagram showing the structure of the DB can be found [here](https://github.com/mfldavidson/si507_finalproj/blob/master/static/SI507%20Final%20Project%20ERD.png).
 
 When running properly, the homepage should look like this:
 ![A picture of the homepage of the We the People Petitions by Issue Application](https://github.com/mfldavidson/si507_finalproj/blob/master/static/index-shot.png?raw=true)
