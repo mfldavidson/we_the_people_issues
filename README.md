@@ -15,20 +15,14 @@ A note about the Plotly plots: I created online plots with Plotly using my Pytho
 When running properly, the homepage should look like this:
 ![A picture of the homepage of the We the People Petitions by Issue Application](https://github.com/mfldavidson/si507_finalproj/blob/master/static/index-shot.png?raw=true)
 
-A brief demo of functionality of the homepage can be seen here:
-![A gif of the We the People Petitions by Issue homepage demo](https://github.com/mfldavidson/si507_finalproj/blob/master/static/index-demo.gif?raw=true)
-
 When running properly, the issues route (accessed by header link "Petitions by Issue") should look like this:
 ![A picture of the issues route of the We the People Petitions by Issue Application](https://github.com/mfldavidson/si507_finalproj/blob/master/static/issues-shot.png?raw=true)
 
 When running properly, the specific issue route (accessed by clicking on an issue on the Issues page as shown above) should look like this:
 ![A picture of the Budget and Taxes Petitions issues route of the We the People Petitions by Issue Application](https://github.com/mfldavidson/si507_finalproj/blob/master/static/spec-issue-shot.png?raw=true)
 
-A brief demo of functionality of the specific issue and issues route can be seen here:
-![A gif of the We the People Petitions by Issue Application issues demo](https://github.com/mfldavidson/si507_finalproj/blob/master/static/spec-issue-demo.gif?raw=true)
-
-A brief demo of functionality of the visualizations route can be seen here:
-![A gif of the We the People Petitions by Issue Application visualizations demo](https://github.com/mfldavidson/si507_finalproj/blob/master/static/viz-demo.gif)
+When running properly, the visualizations route should look like this:
+![A picture of the visualizations route of the We the People Petitions by Issue Application](https://github.com/mfldavidson/si507_finalproj/blob/master/static/viz-shot.png?raw=true)
 
 ## How to run
 
@@ -47,7 +41,9 @@ A brief demo of functionality of the visualizations route can be seen here:
 3. Change the number of entries being shown by clicking "Show 10 entries" and change it to another number. Notice how the number of petitions being shown in the table changes, and the number at the base of the table in "Showing x to x of x entries" changes.
 4. Use the "Previous", "Next", and page number buttons at the bottom right of the table to navigate through the pages of the table.
 5. Use the search bar at the top right of the table and enter "Pai". Notice that one petition is returned, "We the People Call for the Resignation of FCC Chairman Ajit Varadaraj Pai".
-6. Click
+6. Click "Petitions by Issue" in the header, then select one of the issues (try "Civil Rights & Equality") shown to see all petitions tagged with that issue.
+7. Interact with the petition tables in the same ways as #2-4 above. Try the search on Civil Rights & Equality petitions by entering the word "impeach".
+8. Click "Petition Visualizations" in the header. Interact with the second graph by double-clicking on one of the issues at the right to isolate it, then click each issue in turn to add it back.
 
 ## Routes in this application
 - `/` This page explains what the app is and where the data comes from, gives a brief overview of the We the People petitions site, and tells the user how many petitions have been submitted ever, the petition with the most signatures, the difference in signature counts between the first and second rated petitions by signatures, and displays a table showing petitions that have been awaiting a response from the White House for more than 90 days
